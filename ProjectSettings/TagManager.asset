@@ -5,6 +5,9 @@ TagManager:
   serializedVersion: 2
   tags:
   - Barco
+  - Ammo
+  - ammoTarget
+  - Water
   layers:
   - Default
   - TransparentFX

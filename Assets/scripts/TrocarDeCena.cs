@@ -1,10 +1,12 @@
 ﻿using System.Collections; // Necessário para coroutines
 using UnityEngine; //funções básicas da Unity
-using UnityEngine.SceneManagement; // Gerenciamento de cenas
+using UnityEngine.SceneManagement; 
+using UnityEngine.InputSystem;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 namespace TrilloBit3sIndieGames
 {
-    // Classe responsável por trocar de cena e sair do jogo
     public class TrocarDeCena : MonoBehaviour
     {
         [Header("Configuração da Cena")]
@@ -22,6 +24,9 @@ namespace TrilloBit3sIndieGames
         [Tooltip("Painel de créditos que será ativado/desativado")]
         public GameObject creditsPanel;
 
+        [Header("UI Navegação")]
+        public Button firstSelectedButton;
+
         private bool isCreditsOpen = false;
 
         public Health health;
@@ -29,11 +34,32 @@ namespace TrilloBit3sIndieGames
 
         private bool morreu = false;
 
+        public PauseManager pauseManager;
+
         void Start()
         {
             if (health != null)
             {
                 health.OnDeath += OnPlayerDeath;
+            }
+        }
+          
+        void Update()
+        {
+            var gamepad = Gamepad.current;
+
+            //if (gamepad == null) return;
+
+            // Controle
+            if (gamepad != null && gamepad.selectButton.wasPressedThisFrame)
+            {
+                ToggleCredits();
+            }
+
+            // Teclado (opcional)
+            if (Input.GetKeyDown(KeyCode.C))
+            {
+                ToggleCredits();
             }
         }
 
@@ -59,8 +85,24 @@ namespace TrilloBit3sIndieGames
         {
             isCreditsOpen = !isCreditsOpen;
 
-            // Ativa ou desativa o painel
             creditsPanel.SetActive(isCreditsOpen);
+
+            if (isCreditsOpen)
+            {
+                // Cursor.lockState = CursorLockMode.None;
+                // Cursor.visible = true;
+
+                // seleciona botão automaticamente
+                EventSystem.current.SetSelectedGameObject(null);
+                EventSystem.current.SetSelectedGameObject(firstSelectedButton.gameObject);
+            }
+            else
+            {
+                // Cursor.lockState = CursorLockMode.Locked;
+                // Cursor.visible = false;
+
+                EventSystem.current.SetSelectedGameObject(null);
+            }
         }
 
         // Coroutine responsável por carregar a cena com atraso
@@ -93,11 +135,6 @@ namespace TrilloBit3sIndieGames
         {
             if (morreu) return;
             morreu = true;
-
-            // if (trocarDeCena != null)
-            // {
-            //     trocarDeCena.LoadScene();
-            // }
             LoadScene();
         }
 

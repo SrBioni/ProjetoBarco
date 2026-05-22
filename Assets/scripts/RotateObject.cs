@@ -9,6 +9,8 @@ namespace TrilloBit3sIndieGames
 
         void Update()
         {
+            if (Time.timeScale == 0f) return;
+
             // Calcule a rotação com base na velocidade e no eixo escolhido
             float rotationAngle = rotationSpeed * Time.deltaTime;
 

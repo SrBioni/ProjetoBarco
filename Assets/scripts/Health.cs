@@ -16,6 +16,7 @@ namespace TrilloBit3sIndieGames
             currentHealth = maxHealth;
         }
 
+        void Update() { if (Time.timeScale == 0f) return; }
 
         public void TakeDamage(float amount)
         {
@@ -28,6 +29,14 @@ namespace TrilloBit3sIndieGames
                 currentHealth = 0f;
                 Die();
             }
+        }
+
+        public void Heal(float amount)
+        {
+            if (currentHealth <= 0f) return; // opcional: não cura morto
+
+            currentHealth += amount;
+            currentHealth = Mathf.Clamp(currentHealth, 0f, maxHealth);
         }
 
         void Die()
